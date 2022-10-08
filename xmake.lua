@@ -75,7 +75,7 @@ local modules = {
 	},
 	Graphics = {
 		Deps = {"NazaraRenderer"},
-		Packages = {"entt"}
+		Packages = {"entt", "nzsl"} -- we have to re-add nzsl to make rules work
 	},
 	Network = {
 		Deps = {"NazaraCore"},
