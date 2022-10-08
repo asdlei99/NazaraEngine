@@ -75,7 +75,7 @@ local modules = {
 	},
 	Graphics = {
 		Deps = {"NazaraRenderer"},
-		Packages = {"entt"}
+		Packages = {"entt", "nzsl"} -- we have to re-add nzsl to make rules work
 	},
 	Network = {
 		Deps = {"NazaraCore"},
@@ -265,14 +265,9 @@ function ModuleTargetConfig(name, module)
 	end
 
 	if has_config("compile_shaders") then
-		local compileShaderRule = false
-		for _, filepath in pairs(os.files("src/Nazara/" .. name .. "/Resources/**.nzsl")) do
-			if not compileShaderRule then
-				add_rules("nzsl.compile.shaders")
-				compileShaderRule = true
-			end
-
-			add_files(filepath, {rule = "nzsl.compile.shaders"})
+		add_rules("@nzsl/compile.shaders")
+		for _, filepath in pairs(table.join(os.files("src/Nazara/" .. name .. "/Resources/**.nzsl"), os.files("src/Nazara/" .. name .. "/Resources/**.nzslb"))) do
+			add_files(filepath)
 		end
 	end
 
