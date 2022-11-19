@@ -129,7 +129,7 @@ namespace Nz
 		std::shared_ptr<SoundBuffer> buffer = SoundBuffer::LoadFromFile(filePath, params);
 		if (!buffer)
 		{
-			NazaraError("Failed to load buffer from file (" + filePath.generic_u8string() + ')');
+			NazaraError("Failed to load buffer from file (" + Nz::PathToString(filePath) + ')');
 			return false;
 		}
 

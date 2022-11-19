@@ -44,7 +44,7 @@ namespace Nz
 	{
 		if (m_atlas)
 		{
-			if (m_atlas.unique())
+			if (m_atlas.use_count() == 1) //< FIXME
 				m_atlas->Clear(); // Appellera OnAtlasCleared
 			else
 			{

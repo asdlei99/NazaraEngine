@@ -152,7 +152,7 @@ namespace Nz
 		for (auto&& rendererImpl : implementations)
 		{
 #ifndef NAZARA_RENDERER_EMBEDDEDBACKENDS
-			std::string fileNameStr = rendererImpl.fileName.generic_u8string();
+			std::string fileNameStr = Nz::PathToString(rendererImpl.fileName);
 
 			DynLib implLib;
 			if (!implLib.Load(rendererImpl.fileName))

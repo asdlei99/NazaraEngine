@@ -32,7 +32,7 @@ namespace Nz
 			File file(filePath);
 			if (!file.Open(OpenMode::ReadOnly | OpenMode::Text))
 			{
-				NazaraError("Failed to open MTL file (" + file.GetPath().generic_u8string() + ')');
+				NazaraError("Failed to open MTL file (" + Nz::PathToString(file.GetPath()) + ')');
 				return false;
 			}
 
@@ -80,7 +80,7 @@ namespace Nz
 						if (!fullPath.is_absolute())
 							fullPath = baseDir / fullPath;
 
-						data.SetParameter(MaterialData::AlphaTexturePath, fullPath.generic_u8string());
+						data.SetParameter(MaterialData::AlphaTexturePath, Nz::PathToString(fullPath));
 					}
 
 					if (!mtlMat->diffuseMap.empty())
@@ -89,7 +89,7 @@ namespace Nz
 						if (!fullPath.is_absolute())
 							fullPath = baseDir / fullPath;
 
-						data.SetParameter(MaterialData::BaseColorTexturePath, fullPath.generic_u8string());
+						data.SetParameter(MaterialData::BaseColorTexturePath, Nz::PathToString(fullPath));
 					}
 
 					if (!mtlMat->emissiveMap.empty())
@@ -98,7 +98,7 @@ namespace Nz
 						if (!fullPath.is_absolute())
 							fullPath = baseDir / fullPath;
 
-						data.SetParameter(MaterialData::EmissiveTexturePath, fullPath.generic_u8string());
+						data.SetParameter(MaterialData::EmissiveTexturePath, Nz::PathToString(fullPath));
 					}
 
 					if (!mtlMat->normalMap.empty())
@@ -107,7 +107,7 @@ namespace Nz
 						if (!fullPath.is_absolute())
 							fullPath = baseDir / fullPath;
 
-						data.SetParameter(MaterialData::NormalTexturePath, fullPath.generic_u8string());
+						data.SetParameter(MaterialData::NormalTexturePath, Nz::PathToString(fullPath));
 					}
 
 					if (!mtlMat->specularMap.empty())
@@ -116,7 +116,7 @@ namespace Nz
 						if (!fullPath.is_absolute())
 							fullPath = baseDir / fullPath;
 
-						data.SetParameter(MaterialData::SpecularTexturePath, fullPath.generic_u8string());
+						data.SetParameter(MaterialData::SpecularTexturePath, Nz::PathToString(fullPath));
 					}
 
 					// If we either have an alpha value or an alpha map, let's configure the material for transparency

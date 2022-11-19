@@ -61,7 +61,7 @@ namespace Nz
 		{
 			for (auto&& physicalEntry : std::filesystem::directory_iterator(*m_physicalPath))
 			{
-				std::string filename = physicalEntry.path().filename().generic_u8string();
+				std::string filename = Nz::PathToString(physicalEntry.path().filename());
 
 				// Check if physical file/directory has been overridden by a virtual one
 				auto it = std::lower_bound(m_content.begin(), m_content.end(), filename, [](const ContentEntry& entry, std::string_view name)

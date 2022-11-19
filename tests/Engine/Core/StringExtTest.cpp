@@ -124,21 +124,21 @@ SCENARIO("String", "[CORE][STRING]")
 		CHECK_FALSE(Nz::StartsWith("NAZARA Engine", "NavaRa", Nz::CaseIndependent{}));
 		CHECK_FALSE(Nz::StartsWith("NAZARA Engine", "Long long johnson", Nz::CaseIndependent{}));
 
-		CHECK(Nz::StartsWith(u8"L'\u00CEle de R\u00E9", u8"", Nz::UnicodeAware{}));
-		CHECK(Nz::StartsWith(u8"L'\u00CEle de R\u00E9", u8"L'\u00CEle", Nz::UnicodeAware{}));
-		CHECK_FALSE(Nz::StartsWith(u8"L'\u00CEle de R\u00E9", u8"Long long j\u00F4hnson", Nz::UnicodeAware{}));
+		CHECK(Nz::StartsWith(Nz::FromUtf8String(u8"L'\u00CEle de R\u00E9"), Nz::FromUtf8String(u8""), Nz::UnicodeAware{}));
+		CHECK(Nz::StartsWith(Nz::FromUtf8String(u8"L'\u00CEle de R\u00E9"), Nz::FromUtf8String(u8"L'\u00CEle"), Nz::UnicodeAware{}));
+		CHECK_FALSE(Nz::StartsWith(Nz::FromUtf8String(u8"L'\u00CEle de R\u00E9"), Nz::FromUtf8String(u8"Long long j\u00F4hnson"), Nz::UnicodeAware{}));
 
-		CHECK(Nz::StartsWith(u8"L'\u00CEle de R\u00E9", u8"", Nz::CaseIndependent{}, Nz::UnicodeAware{}));
-		CHECK(Nz::StartsWith(u8"L'\u00CEle de R\u00E9", u8"l'\u00EEle", Nz::CaseIndependent{}, Nz::UnicodeAware{}));
-		CHECK_FALSE(Nz::StartsWith(u8"L'\u00CEle de R\u00E9", u8"Long long j\u00F4hnson", Nz::CaseIndependent{}, Nz::UnicodeAware{}));
+		CHECK(Nz::StartsWith(Nz::FromUtf8String(u8"L'\u00CEle de R\u00E9"), Nz::FromUtf8String(u8""), Nz::CaseIndependent{}, Nz::UnicodeAware{}));
+		CHECK(Nz::StartsWith(Nz::FromUtf8String(u8"L'\u00CEle de R\u00E9"), Nz::FromUtf8String(u8"l'\u00EEle"), Nz::CaseIndependent{}, Nz::UnicodeAware{}));
+		CHECK_FALSE(Nz::StartsWith(Nz::FromUtf8String(u8"L'\u00CEle de R\u00E9"), Nz::FromUtf8String(u8"Long long j\u00F4hnson"), Nz::CaseIndependent{}, Nz::UnicodeAware{}));
 	}
 
 	WHEN("Converting between lower and upper")
 	{
 		CHECK(Nz::ToLower("Nazara Engine") == "nazara engine");
-		CHECK(Nz::ToLower(u8"L'\u00CELE DE R\u00C9", Nz::UnicodeAware{}) == u8"l'\u00EEle de r\u00E9");
+		CHECK(Nz::ToLower(Nz::FromUtf8String(u8"L'\u00CELE DE R\u00C9"), Nz::UnicodeAware{}) == u8"l'\u00EEle de r\u00E9");
 		CHECK(Nz::ToUpper("Nazara Engine") == "NAZARA ENGINE");
-		CHECK(Nz::ToUpper(u8"l'\u00EEle de r\u00E9", Nz::UnicodeAware{}) == u8"L'\u00CELE DE R\u00C9");
+		CHECK(Nz::ToUpper(Nz::FromUtf8String(u8"l'\u00EEle de r\u00E9"), Nz::UnicodeAware{}) == u8"L'\u00CELE DE R\u00C9");
 	}
 
 	WHEN("Trimming strings")
@@ -148,7 +148,7 @@ SCENARIO("String", "[CORE][STRING]")
 		CHECK(Nz::Trim("Nazara Engin", 'n', Nz::CaseIndependent{}) == "azara Engi");
 		CHECK(Nz::Trim(unicodeString, Nz::UnicodeAware{}) == unicodeString);
 		CHECK(Nz::Trim("\n\t" + unicodeString + "\t ", Nz::UnicodeAware{}) == unicodeString);
-		CHECK(Nz::Trim(unicodeString, U'\u46E1', Nz::UnicodeAware{}) == u8"\u00E0\u00E9\u00E7\u0153\u00C2\u5B98");
+		CHECK(Nz::Trim(unicodeString, U'\u46E1', Nz::UnicodeAware{}) == Nz::FromUtf8String(u8"\u00E0\u00E9\u00E7\u0153\u00C2\u5B98"));
 		CHECK(Nz::Trim(unicodeString, Nz::Unicode::Category_Letter, Nz::UnicodeAware{}) == "");
 	}
 }

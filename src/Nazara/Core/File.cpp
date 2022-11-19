@@ -185,7 +185,7 @@ namespace Nz
 		if (!impl->Open(m_filePath, openMode))
 		{
 			ErrorFlags flags(ErrorMode::Silent); // Silent by default
-			NazaraError("Failed to open \"" + m_filePath.generic_u8string() + "\": " + Error::GetLastSystemError());
+			NazaraError("Failed to open \"" + Nz::PathToString(m_filePath) + "\": " + Error::GetLastSystemError());
 			return false;
 		}
 
@@ -272,7 +272,7 @@ namespace Nz
 		File file(path);
 		if (!file.Open(OpenMode::ReadOnly | OpenMode::Unbuffered)) //< unbuffered since we will read all the file at once
 		{
-			NazaraError("failed to open \"" + path.generic_u8string() + '"');
+			NazaraError("failed to open \"" + Nz::PathToString(path) + '"');
 			return std::nullopt;
 		}
 
@@ -292,7 +292,7 @@ namespace Nz
 		File file(path);
 		if (!file.Open(OpenMode::WriteOnly | OpenMode::Unbuffered)) //< unbuffered since we will write all the file at once
 		{
-			NazaraError("failed to open \"" + path.generic_u8string() + '"');
+			NazaraError("failed to open \"" + Nz::PathToString(path) + '"');
 			return false;
 		}
 

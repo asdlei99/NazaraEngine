@@ -199,7 +199,7 @@ end
 add_includedirs("include")
 add_sysincludedirs("thirdparty/include")
 
-set_languages("c89", "cxx17")
+set_languages("c89", "c++20")
 set_rundir("./bin/$(plat)_$(arch)_$(mode)")
 set_symbols("debug", "hidden")
 set_targetdir("./bin/$(plat)_$(arch)_$(mode)")
