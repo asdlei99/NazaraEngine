@@ -4,7 +4,7 @@
 
 SCENARIO("String", "[CORE][STRING]")
 {
-	std::string unicodeString(u8"\u00E0\u00E9\u00E7\u0153\u00C2\u5B98\u46E1");
+	std::string unicodeString(Nz::FromUtf8String(u8"\u00E0\u00E9\u00E7\u0153\u00C2\u5B98\u46E1"));
 
 	WHEN("Checking if string ends with")
 	{
@@ -27,13 +27,13 @@ SCENARIO("String", "[CORE][STRING]")
 		CHECK_FALSE(Nz::EndsWith("Nazara Engine", "Nazara", Nz::CaseIndependent{}));
 		CHECK_FALSE(Nz::EndsWith("Nazara Engine", "Sir Nazara van Engine", Nz::CaseIndependent{}));
 
-		CHECK(Nz::EndsWith(u8"L'\u00CEle de R\u00E9", u8"", Nz::UnicodeAware{}));
-		CHECK(Nz::EndsWith(u8"L'\u00CEle de R\u00E9", u8"R\u00E9", Nz::UnicodeAware{}));
-		CHECK_FALSE(Nz::EndsWith(u8"L'\u00CEle de R\u00E9", u8"Long long j\u00F4hnson", Nz::UnicodeAware{}));
+		CHECK(Nz::EndsWith(Nz::FromUtf8String(u8"L'\u00CEle de R\u00E9"), Nz::FromUtf8String(u8""), Nz::UnicodeAware{}));
+		CHECK(Nz::EndsWith(Nz::FromUtf8String(u8"L'\u00CEle de R\u00E9"), Nz::FromUtf8String(u8"R\u00E9"), Nz::UnicodeAware{}));
+		CHECK_FALSE(Nz::EndsWith(Nz::FromUtf8String(u8"L'\u00CEle de R\u00E9"), Nz::FromUtf8String(u8"Long long j\u00F4hnson"), Nz::UnicodeAware{}));
 
-		CHECK(Nz::EndsWith(u8"L'\u00CEle de R\u00E9", u8"", Nz::CaseIndependent{}, Nz::UnicodeAware{}));
-		CHECK(Nz::EndsWith(u8"L'\u00CEle de R\u00E9", u8"R\u00C9", Nz::CaseIndependent{}, Nz::UnicodeAware{}));
-		CHECK_FALSE(Nz::EndsWith(u8"L'\u00CEle de R\u00E9", u8"Long long j\u00F4hnson", Nz::CaseIndependent{}, Nz::UnicodeAware{}));
+		CHECK(Nz::EndsWith(Nz::FromUtf8String(u8"L'\u00CEle de R\u00E9"), Nz::FromUtf8String(u8""), Nz::CaseIndependent{}, Nz::UnicodeAware{}));
+		CHECK(Nz::EndsWith(Nz::FromUtf8String(u8"L'\u00CEle de R\u00E9"), Nz::FromUtf8String(u8"R\u00C9"), Nz::CaseIndependent{}, Nz::UnicodeAware{}));
+		CHECK_FALSE(Nz::EndsWith(Nz::FromUtf8String(u8"L'\u00CEle de R\u00E9"), Nz::FromUtf8String(u8"Long long j\u00F4hnson"), Nz::CaseIndependent{}, Nz::UnicodeAware{}));
 	}
 
 	WHEN("Converting string back and forth")
@@ -47,11 +47,11 @@ SCENARIO("String", "[CORE][STRING]")
 		CHECK(Nz::GetWord({}, 0).empty());
 		CHECK(Nz::GetWord("  ", 0).empty());
 
-		std::string sentence = u8"\nSay hello\tto    Nazara\u00A0Engine\n\t!  "; //< \u00A0 is a No-Break Space
+		std::string_view sentence = Nz::FromUtf8String(u8"\nSay hello\tto    Nazara\u00A0Engine\n\t!  "); //< \u00A0 is a No-Break Space
 		CHECK(Nz::GetWord(sentence, 0) == "Say");
 		CHECK(Nz::GetWord(sentence, 1) == "hello");
 		CHECK(Nz::GetWord(sentence, 2) == "to");
-		CHECK(Nz::GetWord(sentence, 3) == u8"Nazara\u00A0Engine");
+		CHECK(Nz::GetWord(sentence, 3) == Nz::FromUtf8String(u8"Nazara\u00A0Engine"));
 		CHECK(Nz::GetWord(sentence, 4) == "!");
 		CHECK(Nz::GetWord(sentence, 5).empty());
 
@@ -136,9 +136,9 @@ SCENARIO("String", "[CORE][STRING]")
 	WHEN("Converting between lower and upper")
 	{
 		CHECK(Nz::ToLower("Nazara Engine") == "nazara engine");
-		CHECK(Nz::ToLower(Nz::FromUtf8String(u8"L'\u00CELE DE R\u00C9"), Nz::UnicodeAware{}) == u8"l'\u00EEle de r\u00E9");
+		CHECK(Nz::ToLower(Nz::FromUtf8String(u8"L'\u00CELE DE R\u00C9"), Nz::UnicodeAware{}) == Nz::FromUtf8String(u8"l'\u00EEle de r\u00E9"));
 		CHECK(Nz::ToUpper("Nazara Engine") == "NAZARA ENGINE");
-		CHECK(Nz::ToUpper(Nz::FromUtf8String(u8"l'\u00EEle de r\u00E9"), Nz::UnicodeAware{}) == u8"L'\u00CELE DE R\u00C9");
+		CHECK(Nz::ToUpper(Nz::FromUtf8String(u8"l'\u00EEle de r\u00E9"), Nz::UnicodeAware{}) == Nz::FromUtf8String(u8"L'\u00CELE DE R\u00C9"));
 	}
 
 	WHEN("Trimming strings")

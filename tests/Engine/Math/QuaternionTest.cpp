@@ -229,9 +229,9 @@ SCENARIO("Quaternion", "[MATH][QUATERNION]")
 				CHECK(Nz::NumberEquals(rotation90Y.ToEulerAngles().yaw.ToDegrees(), 90.f, 0.1f));
 				CHECK(Nz::NumberEquals(rotation90Z.ToEulerAngles().roll.ToDegrees(), 90.f, 0.1f));
 
-				CHECK(rotation180X == Nz::EulerAnglesf(180.f, 0.f, 0.f));
-				CHECK(rotation180Y == Nz::EulerAnglesf(0.f, 180.f, 0.f));
-				CHECK(rotation180Z == Nz::EulerAnglesf(0.f, 0.f, 180.f));
+				CHECK(rotation180X == Nz::Quaternionf(Nz::EulerAnglesf(180.f, 0.f, 0.f)));
+				CHECK(rotation180Y == Nz::Quaternionf(Nz::EulerAnglesf(0.f, 180.f, 0.f)));
+				CHECK(rotation180Z == Nz::Quaternionf(Nz::EulerAnglesf(0.f, 0.f, 180.f)));
 
 				CHECK(Nz::NumberEquals(rotation270X.ToEulerAngles().pitch.ToDegrees(), -90.f, 0.1f));
 				CHECK(Nz::NumberEquals(rotation270Y.ToEulerAngles().yaw.ToDegrees(), -90.f, 0.1f));

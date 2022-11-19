@@ -27,8 +27,8 @@ SCENARIO("Vector3", "[MATH][VECTOR3]")
 			{
 				REQUIRE(firstUnit.AbsDotProduct(tmp) == Catch::Approx(2.f));
 				REQUIRE(firstUnit.DotProduct(tmp) == Catch::Approx(0.f));
-				REQUIRE(firstUnit.AngleBetween(tmp) == Nz::DegreeAnglef(90.f));
-				REQUIRE(firstUnit.AngleBetween(-firstUnit) == Nz::DegreeAnglef(180.f));
+				REQUIRE(firstUnit.AngleBetween(tmp) == Nz::DegreeAnglef(90.f).ToRadianAngle());
+				REQUIRE(firstUnit.AngleBetween(-firstUnit) == Nz::DegreeAnglef(180.f).ToRadianAngle());
 			}
 		}
 
