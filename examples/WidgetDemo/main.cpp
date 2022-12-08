@@ -6,9 +6,6 @@
 #include <Nazara/Graphics/Components.hpp>
 #include <Nazara/Graphics/Systems.hpp>
 #include <Nazara/Math/PidController.hpp>
-#include <Nazara/Physics3D.hpp>
-#include <Nazara/Physics3D/Components.hpp>
-#include <Nazara/Physics3D/Systems.hpp>
 #include <Nazara/Renderer.hpp>
 #include <Nazara/Utility.hpp>
 #include <Nazara/Utility/Components.hpp>
@@ -37,7 +34,7 @@ int main()
 
 	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-	Nz::Modules<Nz::Graphics, Nz::Physics3D, Nz::Widgets> nazara(rendererConfig);
+	Nz::Modules<Nz::Graphics, Nz::Widgets> nazara(rendererConfig);
 
 	std::shared_ptr<Nz::RenderDevice> device = Nz::Graphics::Instance()->GetRenderDevice();
 

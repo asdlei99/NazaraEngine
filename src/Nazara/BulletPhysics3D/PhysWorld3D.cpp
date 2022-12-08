@@ -1,0 +1,109 @@
+// Copyright (C) 2022 Jérôme "Lynix" Leclercq (lynix680@gmail.com)
+// This file is part of the "Nazara Engine - BulletPhysics3D module"
+// For conditions of distribution and use, see copyright notice in Config.hpp
+
+#include <Nazara/BulletPhysics3D/PhysWorld3D.hpp>
+#include <Nazara/NewtonPhysics3D/PhysWorld3D.hpp>
+#include <Nazara/Utils/StackVector.hpp>
+#include <BulletCollision/BroadphaseCollision/btDbvtBroadphase.h>
+#include <BulletCollision/CollisionDispatch/btCollisionDispatcher.h>
+#include <BulletCollision/CollisionDispatch/btDefaultCollisionConfiguration.h>
+#include <BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolver.h>
+#include <BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>
+#include <cassert>
+#include <Nazara/BulletPhysics3D/Debug.hpp>
+
+namespace Nz
+{
+	struct PhysWorld3D::BulletWorld
+	{
+		btDefaultCollisionConfiguration collisionConfiguration;
+		btCollisionDispatcher dispatcher;
+		btDbvtBroadphase broadphase;
+		btSequentialImpulseConstraintSolver constraintSolver;
+		btDiscreteDynamicsWorld dynamicWorld;
+
+		BulletWorld() :
+		dispatcher(&collisionConfiguration),
+		dynamicWorld(&dispatcher, &broadphase, &constraintSolver, &collisionConfiguration)
+		{
+		}
+
+		BulletWorld(const BulletWorld&) = delete;
+		BulletWorld(BulletWorld&&) = delete;
+
+		BulletWorld& operator=(const BulletWorld&) = delete;
+		BulletWorld& operator=(BulletWorld&&) = delete;
+	};
+
+	PhysWorld3D::PhysWorld3D() :
+	m_maxStepCount(50),
+	m_gravity(Vector3f::Zero()),
+	m_stepSize(1.f / 120.f),
+	m_timestepAccumulator(0.f)
+	{
+		m_world = std::make_unique<BulletWorld>();
+	}
+
+	PhysWorld3D::PhysWorld3D(PhysWorld3D&& physWorld) noexcept = default;
+
+	PhysWorld3D::~PhysWorld3D() = default;
+
+	void PhysWorld3D::ForEachBodyInAABB(const Boxf& box, const BodyIterator& iterator)
+	{
+		/*auto NewtonCallback = [](const NewtonBody* const body, void* const userdata) -> int
+		{
+			const BodyIterator& bodyIterator = *static_cast<BodyIterator*>(userdata);
+			return bodyIterator(*static_cast<RigidBody3D*>(NewtonBodyGetUserData(body)));
+		};
+
+		Vector3f min = box.GetMinimum();
+		Vector3f max = box.GetMaximum();
+		NewtonWorldForEachBodyInAABBDo(m_world, &min.x, &max.x, NewtonCallback, const_cast<void*>(static_cast<const void*>(&iterator)));*/
+	}
+
+	Vector3f PhysWorld3D::GetGravity() const
+	{
+		return m_gravity;
+	}
+
+	std::size_t PhysWorld3D::GetMaxStepCount() const
+	{
+		return m_maxStepCount;
+	}
+
+	float PhysWorld3D::GetStepSize() const
+	{
+		return m_stepSize;
+	}
+
+	void PhysWorld3D::SetGravity(const Vector3f& gravity)
+	{
+		m_world->dynamicWorld.setGravity(btVector3{ gravity.x, gravity.y, gravity.z });
+	}
+
+	void PhysWorld3D::SetMaxStepCount(std::size_t maxStepCount)
+	{
+		m_maxStepCount = maxStepCount;
+	}
+
+	void PhysWorld3D::SetStepSize(float stepSize)
+	{
+		m_stepSize = stepSize;
+	}
+
+	void PhysWorld3D::Step(float timestep)
+	{
+		m_timestepAccumulator += timestep;
+
+		std::size_t stepCount = 0;
+		while (m_timestepAccumulator >= m_stepSize && stepCount < m_maxStepCount)
+		{
+			m_world->dynamicWorld.stepSimulation(m_stepSize, 0, m_stepSize);
+			m_timestepAccumulator -= m_stepSize;
+			stepCount++;
+		}
+	}
+
+	PhysWorld3D& PhysWorld3D::operator=(PhysWorld3D&& physWorld) noexcept = default;
+}

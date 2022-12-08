@@ -5,9 +5,9 @@
 #include <Nazara/Graphics/Components.hpp>
 #include <Nazara/Graphics/Systems.hpp>
 #include <Nazara/Math/PidController.hpp>
-#include <Nazara/Physics2D.hpp>
-#include <Nazara/Physics2D/Components.hpp>
-#include <Nazara/Physics2D/Systems.hpp>
+#include <Nazara/ChipmunkPhysics2D.hpp>
+#include <Nazara/ChipmunkPhysics2D/Components.hpp>
+#include <Nazara/ChipmunkPhysics2D/Systems.hpp>
 #include <Nazara/Renderer.hpp>
 #include <Nazara/Utility.hpp>
 #include <Nazara/Utility/Components.hpp>

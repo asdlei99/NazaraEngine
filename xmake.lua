@@ -57,6 +57,11 @@ local modules = {
 			end
 		end
 	},
+	ChipmunkPhysics2D = {
+		Option = "chipmunkphysics",
+		Deps = {"NazaraUtility"},
+		Packages = {"entt", "chipmunk2d"}
+	},
 	Core = {
 		Custom = function ()
 			add_headerfiles("include/(Nazara/*.hpp)")
@@ -77,6 +82,11 @@ local modules = {
 		Deps = {"NazaraRenderer"},
 		Packages = {"entt"}
 	},
+	NewtonPhysics3D = {
+		Option = "newtonphysics",
+		Deps = {"NazaraUtility"},
+		Packages = {"entt", "newtondynamics3"}
+	},
 	Network = {
 		Deps = {"NazaraCore"},
 		Custom = function()
@@ -89,14 +99,6 @@ local modules = {
 				remove_files("src/Nazara/Network/Posix/SocketPollerImpl.cpp")
 			end
 		end
-	},
-	Physics2D = {
-		Deps = {"NazaraUtility"},
-		Packages = {"entt", "chipmunk2d"}
-	},
-	Physics3D = {
-		Deps = {"NazaraUtility"},
-		Packages = {"entt", "newtondynamics3"}
 	},
 	Platform = {
 		Deps = {"NazaraUtility"},
@@ -151,30 +153,41 @@ NazaraModules = modules
 
 includes("xmake/**.lua")
 
+option("chipmunkphysics", { description = "Enable Chipmunk Physics integration", default = true })
 option("compile_shaders", { description = "Compile nzsl shaders into an includable binary version", default = true })
 option("embed_rendererbackends", { description = "Embed renderer backend code into NazaraRenderer instead of loading them dynamically", default = false })
 option("embed_resources", { description = "Turn builtin resources into includable headers", default = true })
 option("link_openal", { description = "Link OpenAL in the executable instead of dynamically loading it", default = false })
+option("newtonphysics", { description = "Enable Newton Physics integration", default = true })
 option("override_runtime", { description = "Override vs runtime to MD in release and MDd in debug", default = true })
 option("usepch", { description = "Use precompiled headers to speedup compilation", default = false })
 option("unitybuild", { description = "Build the engine using unity build", default = false })
 
-set_project("NazaraEngine")
-set_xmakever("2.7.3")
-
-add_requires("chipmunk2d", "dr_wav", "efsw", "entt 3.10.1", "fmt", "frozen", "kiwisolver", "libflac", "libsdl", "minimp3", "ordered_map", "stb")
+-- Required packages (dependencies)
+add_requires("dr_wav", "efsw", "entt 3.10.1", "fmt", "frozen", "kiwisolver", "libflac", "libsdl", "minimp3", "ordered_map", "stb")
 add_requires("freetype", { configs = { bzip2 = true, png = true, woff2 = true, zlib = true, debug = is_mode("debug") } })
 add_requires("libvorbis", { configs = { with_vorbisenc = false } })
 add_requires("openal-soft", { configs = { shared = true }})
-add_requires("newtondynamics3", { debug = is_plat("windows") and is_mode("debug") }) -- Newton doesn't like compiling in Debug on Linux
 
 add_repositories("nazara-engine-repo https://github.com/NazaraEngine/xmake-repo")
 add_requires("nazarautils")
 add_requires("nzsl", { debug = is_mode("debug"), configs = { with_symbols = not is_mode("release"), shared = true } })
 
+if has_config("chipmunkphysics") then
+	add_requires("chipmunk2d")
+end
+
+if has_config("newtonphysics") then
+	add_requires("newtondynamics3", { debug = is_plat("windows") and is_mode("debug") }) -- Newton doesn't like compiling in Debug on Linux
+end
+
 if is_plat("linux") then
 	add_requires("libxext", "libuuid", "wayland")
 end
+
+-- Project configuration
+set_project("NazaraEngine")
+set_xmakever("2.7.3")
 
 add_rules("mode.asan", "mode.tsan", "mode.coverage", "mode.debug", "mode.releasedbg", "mode.release")
 add_rules("plugin.vsxmake.autoupdate")
@@ -305,6 +318,10 @@ function ModuleTargetConfig(name, module)
 end
 
 for name, module in pairs(modules) do
+	if module.Option and not has_config(module.Option) then
+		goto continue
+	end
+
 	target("Nazara" .. name, function ()
 		set_kind("shared")
 		set_group("Modules")
@@ -341,6 +358,8 @@ for name, module in pairs(modules) do
 
 		ModuleTargetConfig(name, module)
 	end)
+
+	::continue::
 end
 
 includes("tools/*.lua")

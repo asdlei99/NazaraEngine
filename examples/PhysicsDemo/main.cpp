@@ -6,9 +6,9 @@
 #include <Nazara/Graphics/Components.hpp>
 #include <Nazara/Graphics/Systems.hpp>
 #include <Nazara/Math/PidController.hpp>
-#include <Nazara/Physics3D.hpp>
-#include <Nazara/Physics3D/Components.hpp>
-#include <Nazara/Physics3D/Systems.hpp>
+#include <Nazara/NewtonPhysics3D.hpp>
+#include <Nazara/NewtonPhysics3D/Components.hpp>
+#include <Nazara/NewtonPhysics3D/Systems.hpp>
 #include <Nazara/Renderer.hpp>
 #include <Nazara/Utility.hpp>
 #include <Nazara/Utility/Components.hpp>
