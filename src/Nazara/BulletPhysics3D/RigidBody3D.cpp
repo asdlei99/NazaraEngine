@@ -5,11 +5,11 @@
 #include <Nazara/BulletPhysics3D/RigidBody3D.hpp>
 #include <Nazara/BulletPhysics3D/BulletHelper.hpp>
 #include <Nazara/BulletPhysics3D/PhysWorld3D.hpp>
+#include <BulletDynamics/Dynamics/btDynamicsWorld.h>
+#include <BulletDynamics/Dynamics/btRigidBody.h>
 #include <algorithm>
 #include <array>
 #include <cmath>
-#include <BulletDynamics/Dynamics/btDynamicsWorld.h>
-#include <BulletDynamics/Dynamics/btRigidBody.h>
 #include <Nazara/BulletPhysics3D/Debug.hpp>
 
 namespace Nz

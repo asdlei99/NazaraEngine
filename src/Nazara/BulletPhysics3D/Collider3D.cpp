@@ -11,6 +11,7 @@
 #include <Nazara/Utility/StaticMesh.hpp>
 #include <Nazara/Utility/VertexBuffer.hpp>
 #include <Nazara/Utils/MemoryHelper.hpp>
+#include <tsl/ordered_map.h>
 #include <BulletCollision/CollisionShapes/btBoxShape.h>
 #include <BulletCollision/CollisionShapes/btCapsuleShape.h>
 #include <BulletCollision/CollisionShapes/btCompoundShape.h>
@@ -18,7 +19,6 @@
 #include <BulletCollision/CollisionShapes/btConvexHullShape.h>
 #include <BulletCollision/CollisionShapes/btCylinderShape.h>
 #include <BulletCollision/CollisionShapes/btSphereShape.h>
-#include <tsl/ordered_map.h>
 #include <Nazara/BulletPhysics3D/Debug.hpp>
 
 namespace Nz
