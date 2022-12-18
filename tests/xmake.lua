@@ -12,7 +12,7 @@ if has_config("tests") then
 	set_group("Tests")
 	set_kind("binary")
 
-	add_deps("NazaraAudio", "NazaraCore", "NazaraNetwork", "NazaraPhysics2D")
+	add_deps("NazaraAudio", "NazaraCore", "NazaraNetwork", "NazaraChipmunkPhysics2D")
 	add_packages("catch2", "entt")
 	add_headerfiles("Engine/**.hpp", { prefixdir = "private", install = false })
 	add_files("resources.cpp")
