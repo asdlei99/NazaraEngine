@@ -144,7 +144,7 @@ namespace Nz
 			NewtonCollisionForEachPolygonDo(m_handles.begin()->second, &identity.m11, newtCallback, const_cast<void*>(static_cast<const void*>(&callback))); //< This isn't that bad; pointer will not be used for writing
 	}
 
-	std::shared_ptr<StaticMesh> Collider3D::GenerateMesh() const
+	std::shared_ptr<StaticMesh> Collider3D::GenerateDebugMesh() const
 	{
 		std::vector<Vector3f> colliderVertices;
 		std::vector<UInt16> colliderIndices;

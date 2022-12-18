@@ -8,11 +8,11 @@
 #define NAZARA_BULLETPHYSICS3D_COMPONENTS_RIGIDBODY3DCOMPONENT_HPP
 
 #include <Nazara/Prerequisites.hpp>
-#include <Nazara/NewtonPhysics3D/RigidBody3D.hpp>
+#include <Nazara/BulletPhysics3D/RigidBody3D.hpp>
 
 namespace Nz
 {
-	class NAZARA_NEWTONPHYSICS3D_API RigidBody3DComponent : public RigidBody3D
+	class NAZARA_BULLETPHYSICS3D_API RigidBody3DComponent : public RigidBody3D
 	{
 		friend class Physics3DSystem;
 
@@ -27,6 +27,6 @@ namespace Nz
 	};
 }
 
-#include <Nazara/NewtonPhysics3D/Components/RigidBody3DComponent.inl>
+#include <Nazara/BulletPhysics3D/Components/RigidBody3DComponent.inl>
 
 #endif // NAZARA_BULLETPHYSICS3D_COMPONENTS_RIGIDBODY3DCOMPONENT_HPP

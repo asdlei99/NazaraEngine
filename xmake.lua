@@ -57,6 +57,11 @@ local modules = {
 			end
 		end
 	},
+	BulletPhysics3D = {
+		Option = "bulletphysics",
+		Deps = {"NazaraUtility"},
+		Packages = {"entt", "bullet3", "ordered_map"}
+	},
 	ChipmunkPhysics2D = {
 		Option = "chipmunkphysics",
 		Deps = {"NazaraUtility"},
@@ -153,6 +158,7 @@ NazaraModules = modules
 
 includes("xmake/**.lua")
 
+option("bulletphysics", { description = "Enable Bullet Physics integration", default = true })
 option("chipmunkphysics", { description = "Enable Chipmunk Physics integration", default = true })
 option("compile_shaders", { description = "Compile nzsl shaders into an includable binary version", default = true })
 option("embed_rendererbackends", { description = "Embed renderer backend code into NazaraRenderer instead of loading them dynamically", default = false })
@@ -172,6 +178,10 @@ add_requires("openal-soft", { configs = { shared = true }})
 add_repositories("nazara-engine-repo https://github.com/NazaraEngine/xmake-repo")
 add_requires("nazarautils")
 add_requires("nzsl", { debug = is_mode("debug"), configs = { with_symbols = not is_mode("release"), shared = true } })
+
+if has_config("bulletphysics") then
+	add_requires("bullet3")
+end
 
 if has_config("chipmunkphysics") then
 	add_requires("chipmunk2d")

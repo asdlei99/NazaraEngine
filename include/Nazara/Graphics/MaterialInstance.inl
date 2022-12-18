@@ -200,6 +200,27 @@ namespace Nz
 		InvalidatePassPipeline(passIndex);
 	}
 
+	template<typename F>
+	void MaterialInstance::UpdatePassesStates(F&& stateUpdater)
+	{
+		using Ret = std::invoke_result_t<F, RenderStates&>;
+
+		for (std::size_t passIndex = 0; passIndex < m_passes.size(); ++passIndex)
+		{
+			if constexpr (std::is_same_v<Ret, bool>)
+			{
+				if (!stateUpdater(static_cast<RenderStates&>(m_passes[passIndex].pipelineInfo)))
+					return;
+			}
+			else if constexpr (std::is_void_v<Ret>)
+				stateUpdater(static_cast<RenderStates&>(m_passes[passIndex].pipelineInfo));
+			else
+				static_assert(AlwaysFalse<Ret>(), "callback must either return a bool or nothing");
+
+			InvalidatePassPipeline(passIndex);
+		}
+	}
+
 	inline void MaterialInstance::InvalidatePassPipeline(std::size_t passIndex)
 	{
 		assert(passIndex < m_passes.size());

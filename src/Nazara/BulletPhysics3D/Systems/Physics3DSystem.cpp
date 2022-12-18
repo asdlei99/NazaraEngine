@@ -3,7 +3,6 @@
 // For conditions of distribution and use, see copyright notice in Config.hpp
 
 #include <Nazara/BulletPhysics3D/Systems/Physics3DSystem.hpp>
-#include <Nazara/NewtonPhysics3D/Systems/Physics3DSystem.hpp>
 #include <Nazara/Utility/Components/NodeComponent.hpp>
 #include <Nazara/BulletPhysics3D/Debug.hpp>
 

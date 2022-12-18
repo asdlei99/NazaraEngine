@@ -3,7 +3,7 @@
 // For conditions of distribution and use, see copyright notice in Config.hpp
 
 #include <Nazara/BulletPhysics3D/PhysWorld3D.hpp>
-#include <Nazara/NewtonPhysics3D/PhysWorld3D.hpp>
+#include <Nazara/BulletPhysics3D/BulletHelper.hpp>
 #include <Nazara/Utils/StackVector.hpp>
 #include <BulletCollision/BroadphaseCollision/btDbvtBroadphase.h>
 #include <BulletCollision/CollisionDispatch/btCollisionDispatcher.h>
@@ -49,22 +49,14 @@ namespace Nz
 
 	PhysWorld3D::~PhysWorld3D() = default;
 
-	void PhysWorld3D::ForEachBodyInAABB(const Boxf& box, const BodyIterator& iterator)
+	btDynamicsWorld* PhysWorld3D::GetDynamicsWorld()
 	{
-		/*auto NewtonCallback = [](const NewtonBody* const body, void* const userdata) -> int
-		{
-			const BodyIterator& bodyIterator = *static_cast<BodyIterator*>(userdata);
-			return bodyIterator(*static_cast<RigidBody3D*>(NewtonBodyGetUserData(body)));
-		};
-
-		Vector3f min = box.GetMinimum();
-		Vector3f max = box.GetMaximum();
-		NewtonWorldForEachBodyInAABBDo(m_world, &min.x, &max.x, NewtonCallback, const_cast<void*>(static_cast<const void*>(&iterator)));*/
+		return &m_world->dynamicWorld;
 	}
 
 	Vector3f PhysWorld3D::GetGravity() const
 	{
-		return m_gravity;
+		return FromBullet(m_world->dynamicWorld.getGravity());
 	}
 
 	std::size_t PhysWorld3D::GetMaxStepCount() const
@@ -79,7 +71,7 @@ namespace Nz
 
 	void PhysWorld3D::SetGravity(const Vector3f& gravity)
 	{
-		m_world->dynamicWorld.setGravity(btVector3{ gravity.x, gravity.y, gravity.z });
+		m_world->dynamicWorld.setGravity(ToBullet(gravity));
 	}
 
 	void PhysWorld3D::SetMaxStepCount(std::size_t maxStepCount)

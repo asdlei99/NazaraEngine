@@ -8,14 +8,14 @@
 #define NAZARA_BULLETPHYSICS3D_SYSTEMS_PHYSICS3DSYSTEM_HPP
 
 #include <Nazara/Prerequisites.hpp>
-#include <Nazara/NewtonPhysics3D/PhysWorld3D.hpp>
-#include <Nazara/NewtonPhysics3D/Components/RigidBody3DComponent.hpp>
+#include <Nazara/BulletPhysics3D/PhysWorld3D.hpp>
+#include <Nazara/BulletPhysics3D/Components/RigidBody3DComponent.hpp>
 #include <Nazara/Utils/TypeList.hpp>
 #include <entt/entt.hpp>
 
 namespace Nz
 {
-	class NAZARA_NEWTONPHYSICS3D_API Physics3DSystem
+	class NAZARA_BULLETPHYSICS3D_API Physics3DSystem
 	{
 		public:
 			static constexpr Int64 ExecutionOrder = 0;
@@ -45,6 +45,6 @@ namespace Nz
 	};
 }
 
-#include <Nazara/NewtonPhysics3D/Systems/Physics3DSystem.inl>
+#include <Nazara/BulletPhysics3D/Systems/Physics3DSystem.inl>
 
 #endif // NAZARA_BULLETPHYSICS3D_SYSTEMS_PHYSICS3DSYSTEM_HPP

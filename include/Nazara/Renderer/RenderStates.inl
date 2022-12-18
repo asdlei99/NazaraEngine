@@ -27,8 +27,11 @@ namespace Nz
 			NazaraRenderStateBoolMember(depthWrite);
 
 		NazaraRenderStateMember(colorWriteMask);
+		NazaraRenderStateMember(depthCompare);
 		NazaraRenderStateMember(faceCulling);
 		NazaraRenderStateMember(faceFilling);
+		NazaraRenderStateMember(frontFace);
+		NazaraRenderStateMember(primitiveMode);
 
 		if (lhs.blending) //< Remember, at this time we know lhs.blending == rhs.blending
 		{
@@ -108,8 +111,11 @@ namespace std
 			NazaraRenderStateBoolDep(depthBuffer, depthWrite);
 
 			NazaraRenderStateUInt8(colorWriteMask);
+			NazaraRenderStateEnum(depthCompare);
 			NazaraRenderStateEnum(faceCulling);
 			NazaraRenderStateEnum(faceFilling);
+			NazaraRenderStateEnum(frontFace);
+			NazaraRenderStateEnum(primitiveMode);
 
 			if (pipelineInfo.blending) //< we don't care about blending state if blending isn't enabled
 			{

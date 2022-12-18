@@ -8,36 +8,28 @@
 #define NAZARA_BULLETPHYSICS3D_PHYSWORLD3D_HPP
 
 #include <Nazara/Prerequisites.hpp>
+#include <Nazara/BulletPhysics3D/Config.hpp>
 #include <Nazara/Math/Box.hpp>
 #include <Nazara/Math/Vector3.hpp>
-#include <Nazara/NewtonPhysics3D/Config.hpp>
 #include <Nazara/Utils/MovablePtr.hpp>
 #include <string>
 #include <unordered_map>
 
-class NewtonBody;
-class NewtonJoint;
-class NewtonMaterial;
-class NewtonWorld;
+class btDynamicsWorld;
 
 namespace Nz
 {
 	class RigidBody3D;
 
-	class NAZARA_NEWTONPHYSICS3D_API PhysWorld3D
+	class NAZARA_BULLETPHYSICS3D_API PhysWorld3D
 	{
 		public:
-			using BodyIterator = std::function<bool(RigidBody3D& body)>;
-			using AABBOverlapCallback = std::function<bool(const RigidBody3D& firstBody, const RigidBody3D& secondBody)>;
-			using CollisionCallback = std::function<bool(const RigidBody3D& firstBody, const RigidBody3D& secondBody)>;
-
 			PhysWorld3D();
 			PhysWorld3D(const PhysWorld3D&) = delete;
 			PhysWorld3D(PhysWorld3D&& ph) noexcept;
 			~PhysWorld3D();
 
-			void ForEachBodyInAABB(const Boxf& box, const BodyIterator& iterator);
-
+			btDynamicsWorld* GetDynamicsWorld();
 			Vector3f GetGravity() const;
 			std::size_t GetMaxStepCount() const;
 			float GetStepSize() const;
@@ -52,16 +44,8 @@ namespace Nz
 			PhysWorld3D& operator=(PhysWorld3D&&) noexcept;
 
 		private:
-			struct Callback
-			{
-				AABBOverlapCallback aabbOverlapCallback;
-				CollisionCallback collisionCallback;
-			};
-
 			struct BulletWorld;
 
-			std::unordered_map<Nz::UInt64, std::unique_ptr<Callback>> m_callbacks;
-			std::unordered_map<std::string, int> m_materialIds;
 			std::size_t m_maxStepCount;
 			std::unique_ptr<BulletWorld> m_world;
 			Vector3f m_gravity;

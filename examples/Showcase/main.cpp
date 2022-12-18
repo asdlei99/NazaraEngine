@@ -6,9 +6,9 @@
 #include <Nazara/Graphics/Components.hpp>
 #include <Nazara/Graphics/Systems.hpp>
 #include <Nazara/Math/PidController.hpp>
-#include <Nazara/NewtonPhysics3D.hpp>
-#include <Nazara/NewtonPhysics3D/Components.hpp>
-#include <Nazara/NewtonPhysics3D/Systems.hpp>
+#include <Nazara/BulletPhysics3D.hpp>
+#include <Nazara/BulletPhysics3D/Components.hpp>
+#include <Nazara/BulletPhysics3D/Systems.hpp>
 #include <Nazara/Renderer.hpp>
 #include <Nazara/Utility.hpp>
 #include <Nazara/Utility/Components.hpp>
@@ -68,14 +68,35 @@ int main()
 
 		auto& playerBody = registry.emplace<Nz::RigidBody3DComponent>(playerEntity, &physSytem.GetPhysWorld());
 		playerBody.SetMass(42.f);
-		playerBody.SetGeom(std::make_shared<Nz::BoxCollider3D>(Nz::Vector3f::Unit()));
+		playerBody.SetGeom(std::make_shared<Nz::BoxCollider3D>(Nz::Vector3f::Unit() * 0.5f));
+
+		std::shared_ptr<Nz::Model> colliderModel;
+		{
+			std::shared_ptr<Nz::MaterialInstance> colliderMat = Nz::Graphics::Instance()->GetDefaultMaterials().basicMaterial->Instantiate();
+			colliderMat->SetValueProperty("BaseColor", Nz::Color::Green);
+			colliderMat->UpdatePassesStates([](Nz::RenderStates& states)
+			{
+				states.primitiveMode = Nz::PrimitiveMode::LineList;
+				return true;
+			});
+
+			std::shared_ptr<Nz::Mesh> colliderMesh = Nz::Mesh::Build(playerBody.GetGeom()->GenerateDebugMesh());
+			std::shared_ptr<Nz::GraphicalMesh> colliderGraphicalMesh = Nz::GraphicalMesh::BuildFromMesh(*colliderMesh);
+
+			colliderModel = std::make_shared<Nz::Model>(colliderGraphicalMesh, colliderMesh->GetAABB());
+			for (std::size_t i = 0; i < colliderModel->GetSubMeshCount(); ++i)
+				colliderModel->SetMaterial(i, colliderMat);
+		}
+
+		auto& playerGfx = registry.emplace<Nz::GraphicsComponent>(playerEntity);
+		playerGfx.AttachRenderable(std::move(colliderModel), 0xFFFFFFFF);
 
 		auto& playerRotNode = registry.emplace<Nz::NodeComponent>(playerRotation);
 		playerRotNode.SetParent(playerNode);
 
 		auto& cameraNode = registry.emplace<Nz::NodeComponent>(playerCamera);
-		cameraNode.SetPosition(Nz::Vector3f::Up() * 2.f + Nz::Vector3f::Backward());
-		//cameraNode.SetParent(playerRotNode);
+		//cameraNode.SetPosition(Nz::Vector3f::Up() * 2.f + Nz::Vector3f::Backward());
+		cameraNode.SetParent(playerRotNode);
 
 		auto& cameraComponent = registry.emplace<Nz::CameraComponent>(playerCamera, window.GetRenderTarget());
 		cameraComponent.UpdateZNear(0.2f);
@@ -338,7 +359,7 @@ int main()
 		registry.emplace<Nz::NodeComponent>(planeEntity);
 
 		auto& planeBody = registry.emplace<Nz::RigidBody3DComponent>(planeEntity, &physSytem.GetPhysWorld());
-		planeBody.SetGeom(std::make_shared<Nz::BoxCollider3D>(Nz::Vector3f(planeSize.x, 0.5f, planeSize.y), Nz::Vector3f(0.f, -0.25f, 0.f)));
+		planeBody.SetGeom(std::make_shared<Nz::BoxCollider3D>(Nz::Vector3f(planeSize.x, 0.5f, planeSize.y)));
 
 		Nz::Mesh boxMesh;
 		boxMesh.CreateStatic();
@@ -413,7 +434,7 @@ int main()
 		{
 			float updateTime = updateClock.Restart() / 1'000'000.f;
 
-			/*auto& playerBody = registry.get<Nz::RigidBody3DComponent>(playerEntity);
+			auto& playerBody = registry.get<Nz::RigidBody3DComponent>(playerEntity);
 
 			float mass = playerBody.GetMass();
 
@@ -430,9 +451,9 @@ int main()
 				playerBody.AddForce(Nz::Vector3f::Left() * 25.f * mass, Nz::CoordSys::Local);
 
 			if (Nz::Keyboard::IsKeyPressed(Nz::Keyboard::VKey::Right) || Nz::Keyboard::IsKeyPressed(Nz::Keyboard::VKey::D))
-				playerBody.AddForce(Nz::Vector3f::Right() * 25.f * mass, Nz::CoordSys::Local);*/
+				playerBody.AddForce(Nz::Vector3f::Right() * 25.f * mass, Nz::CoordSys::Local);
 
-			float cameraSpeed = 2.f;
+			/*float cameraSpeed = 2.f;
 
 			auto& cameraNode = registry.get<Nz::NodeComponent>(playerCamera);
 			if (Nz::Keyboard::IsKeyPressed(Nz::Keyboard::VKey::Space))
@@ -448,7 +469,7 @@ int main()
 				cameraNode.Move(Nz::Vector3f::Left() * cameraSpeed * updateTime, Nz::CoordSys::Local);
 
 			if (Nz::Keyboard::IsKeyPressed(Nz::Keyboard::VKey::Right) || Nz::Keyboard::IsKeyPressed(Nz::Keyboard::VKey::D))
-				cameraNode.Move(Nz::Vector3f::Right() * cameraSpeed * updateTime, Nz::CoordSys::Local);
+				cameraNode.Move(Nz::Vector3f::Right() * cameraSpeed * updateTime, Nz::CoordSys::Local);*/
 
 			if (!paused)
 			{

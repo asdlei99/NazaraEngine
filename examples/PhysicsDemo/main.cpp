@@ -6,9 +6,9 @@
 #include <Nazara/Graphics/Components.hpp>
 #include <Nazara/Graphics/Systems.hpp>
 #include <Nazara/Math/PidController.hpp>
-#include <Nazara/NewtonPhysics3D.hpp>
-#include <Nazara/NewtonPhysics3D/Components.hpp>
-#include <Nazara/NewtonPhysics3D/Systems.hpp>
+#include <Nazara/BulletPhysics3D.hpp>
+#include <Nazara/BulletPhysics3D/Components.hpp>
+#include <Nazara/BulletPhysics3D/Systems.hpp>
 #include <Nazara/Renderer.hpp>
 #include <Nazara/Utility.hpp>
 #include <Nazara/Utility/Components.hpp>
@@ -98,6 +98,7 @@ int main()
 
 	Nz::SystemGraph systemGraph(registry);
 	Nz::Physics3DSystem& physSytem = systemGraph.AddSystem<Nz::Physics3DSystem>();
+	physSytem.GetPhysWorld().SetGravity(Nz::Vector3f::Zero());
 	Nz::RenderSystem& renderSystem = systemGraph.AddSystem<Nz::RenderSystem>();
 
 	std::string windowTitle = "Graphics Test";
@@ -113,7 +114,7 @@ int main()
 		cameraComponent.UpdateClearColor(Nz::Color(0.5f, 0.5f, 0.5f));
 	}
 
-	auto shipCollider = std::make_shared<Nz::ConvexCollider3D>(vertices, vertexMapper.GetVertexCount(), 0.01f);
+	auto shipCollider = std::make_shared<Nz::ConvexCollider3D>(vertices, vertexMapper.GetVertexCount());
 
 	std::shared_ptr<Nz::MaterialInstance> colliderMat = Nz::Graphics::Instance()->GetDefaultMaterials().basicMaterial->Instantiate();
 	colliderMat->SetValueProperty("BaseColor", Nz::Color::Green);
@@ -128,7 +129,7 @@ int main()
 
 	std::shared_ptr<Nz::Model> colliderModel;
 	{
-		std::shared_ptr<Nz::Mesh> colliderMesh = Nz::Mesh::Build(shipCollider->GenerateMesh());
+		std::shared_ptr<Nz::Mesh> colliderMesh = Nz::Mesh::Build(shipCollider->GenerateDebugMesh());
 		std::shared_ptr<Nz::GraphicalMesh> colliderGraphicalMesh = Nz::GraphicalMesh::BuildFromMesh(*colliderMesh);
 
 		colliderModel = std::make_shared<Nz::Model>(colliderGraphicalMesh, spaceshipAABB);
@@ -149,9 +150,8 @@ int main()
 	entt::entity headingEntity = registry.create();
 	{
 		auto& entityLight = registry.emplace<Nz::LightComponent>(playerEntity);
+
 		auto& spotLight = entityLight.AddLight<Nz::SpotLight>(1);
-		spotLight.EnableShadowCasting(true);
-		spotLight.UpdateShadowMapSize(1024);
 
 		auto& entityGfx = registry.emplace<Nz::GraphicsComponent>(playerEntity);
 		entityGfx.AttachRenderable(model, 1);
@@ -161,7 +161,7 @@ int main()
 
 		auto& entityPhys = registry.emplace<Nz::RigidBody3DComponent>(playerEntity, physSytem.CreateRigidBody(shipCollider));
 		entityPhys.SetMass(50.f);
-		entityPhys.SetAngularDamping(Nz::Vector3f::Zero());
+		entityPhys.SetAngularDamping(0.f);
 
 		auto& headingNode = registry.emplace<Nz::NodeComponent>(headingEntity);
 		headingNode.SetInheritRotation(false);
@@ -187,7 +187,7 @@ int main()
 
 				auto& entityPhys = registry.emplace<Nz::RigidBody3DComponent>(entity, physSytem.CreateRigidBody(shipCollider));
 				entityPhys.SetMass(1.f);
-				entityPhys.SetAngularDamping(Nz::Vector3f::Zero());
+				entityPhys.SetAngularDamping(0.f);
 				entityPhys.SetLinearDamping(0.f);
 			}
 		}
@@ -260,7 +260,7 @@ int main()
 
 						auto& entityPhys = registry.emplace<Nz::RigidBody3DComponent>(entity, physSytem.CreateRigidBody(shipCollider));
 						entityPhys.SetMass(1.f);
-						entityPhys.SetAngularDamping(Nz::Vector3f::Zero());
+						entityPhys.SetAngularDamping(0.f);
 						entityPhys.SetLinearDamping(0.f);
 					}
 

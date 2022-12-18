@@ -49,7 +49,7 @@ namespace Nz
 
 			virtual void ForEachPolygon(const std::function<void(const Vector3f* vertices, std::size_t vertexCount)>& callback) const;
 
-			virtual std::shared_ptr<StaticMesh> GenerateMesh() const;
+			virtual std::shared_ptr<StaticMesh> GenerateDebugMesh() const;
 
 			NewtonCollision* GetHandle(PhysWorld3D* world) const;
 			virtual ColliderType3D GetType() const = 0;

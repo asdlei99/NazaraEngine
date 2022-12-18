@@ -3,8 +3,6 @@
 // For conditions of distribution and use, see copyright notice in Config.hpp
 
 #include <Nazara/BulletPhysics3D/Collider3D.hpp>
-#include <Nazara/NewtonPhysics3D/Collider3D.hpp>
-#include <memory>
 #include <Nazara/BulletPhysics3D/Debug.hpp>
 
 namespace Nz
