@@ -125,6 +125,8 @@ namespace Nz
 			public:
 				using AutoFree::AutoFree;
 
+				operator CommandBuffer&() { return Get(); }
+				operator const CommandBuffer&() const { return Get(); }
 				operator VkCommandBuffer() const { return Get(); }
 		};
 	}

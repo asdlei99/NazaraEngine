@@ -153,7 +153,7 @@ namespace Nz
 
 	void OpenGLCommandBufferBuilder::PostTransferBarrier()
 	{
-		/* nothing to do */
+		m_commandBuffer.InsertMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
 	}
 
 	void OpenGLCommandBufferBuilder::SetScissor(const Recti& scissorRegion)
