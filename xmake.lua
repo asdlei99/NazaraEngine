@@ -24,6 +24,10 @@ local rendererBackends = {
 			else
 				remove_files("src/Nazara/OpenGLRenderer/Wrapper/Web/**.cpp")
 			end
+
+			if not is_plat("android") then
+				remove_files("src/Nazara/OpenGLRenderer/Wrapper/Android/**.cpp")
+			end
 		end
 	},
 	VulkanRenderer = {
@@ -41,6 +45,8 @@ local rendererBackends = {
 				add_defines("VK_USE_PLATFORM_METAL_EXT")
 				add_files("src/Nazara/VulkanRenderer/**.mm")
 				add_frameworks("quartzcore", "AppKit")
+			elseif is_plat("android") then
+				add_defines("VK_USE_PLATFORM_ANDROID_KHR")
 			end
 		end
 	}
@@ -78,9 +84,14 @@ local modules = {
 
 			if is_plat("windows", "mingw") then
 				add_syslinks("ole32")
-			elseif is_plat("linux") then
+			elseif is_plat("linux", "android") then
 				add_packages("libuuid")
-				add_syslinks("dl", "pthread")
+				add_syslinks("dl")
+				if is_plat("linux") then
+					add_syslinks("pthread")
+				elseif is_plat("android") then
+					add_syslinks("android", "log")
+				end
 			elseif is_plat("wasm") then
 				--[[
 				Have to fix issues with libsdl first
@@ -112,7 +123,7 @@ local modules = {
 				add_syslinks("ws2_32")
 			end
 
-			if is_plat("linux") then
+			if is_plat("linux", "android") then
 				remove_files("src/Nazara/Network/Posix/SocketPollerImpl.hpp")
 				remove_files("src/Nazara/Network/Posix/SocketPollerImpl.cpp")
 			end
@@ -129,7 +140,11 @@ local modules = {
 	Platform = {
 		Deps = {"NazaraUtility"},
 		Custom = function()
-			add_packages("libsdl", { components = {"lib"}})
+			-- Android has a custom backend
+			if not is_plat("android") then
+				add_packages("libsdl", { components = {"lib"}})
+			end
+
 			if is_plat("windows", "mingw") then
 				add_defines("SDL_VIDEO_DRIVER_WINDOWS=1")
 			elseif is_plat("linux") then
@@ -139,6 +154,9 @@ local modules = {
 			elseif is_plat("macosx") then
 				add_defines("SDL_VIDEO_DRIVER_COCOA=1")
 				add_packages("libx11", { links = {} }) -- we only need X11 headers
+			elseif is_plat("android") then
+				remove_headerfiles("src/Nazara/Platform/SDL2/**")
+				remove_files("src/Nazara/Platform/SDL2/**")
 			elseif is_plat("wasm") then
 				-- emscripten enables USE_SDL by default which will conflict with the sdl headers
 				add_cxflags("-sUSE_SDL=0")
@@ -173,6 +191,8 @@ local modules = {
 if is_plat("wasm") then
 	rendererBackends.VulkanRenderer = nil
 	modules.Physics3D = nil
+elseif is_plat("android") then
+	modules.Physics3D = nil
 end
 
 if not has_config("embed_rendererbackends") then
@@ -196,10 +216,10 @@ includes("xmake/**.lua")
 ----------------------- Global options -----------------------
 
 option("compile_shaders", { description = "Compile nzsl shaders into an includable binary version", default = true })
-option("embed_rendererbackends", { description = "Embed renderer backend code into NazaraRenderer instead of loading them dynamically", default = is_plat("wasm") or false })
+option("embed_rendererbackends", { description = "Embed renderer backend code into NazaraRenderer instead of loading them dynamically", default = is_plat("android", "wasm") or false })
 option("embed_resources", { description = "Turn builtin resources into includable headers", default = true })
-option("embed_plugins", { description = "Embed enabled plugins code as static libraries", default = is_plat("wasm") or false })
-option("link_openal", { description = "Link OpenAL in the executable instead of dynamically loading it", default = is_plat("wasm") or false })
+option("embed_plugins", { description = "Embed enabled plugins code as static libraries", default = is_plat("android", "wasm") or false })
+option("link_openal", { description = "Link OpenAL in the executable instead of dynamically loading it", default = is_plat("android", "wasm") or false })
 option("override_runtime", { description = "Override vs runtime to MD in release and MDd in debug", default = true })
 option("usepch", { description = "Use precompiled headers to speedup compilation", default = false })
 option("unitybuild", { description = "Build the engine using unity build", default = false })
@@ -229,7 +249,6 @@ add_requires(
 	"frozen",
 	"kiwisolver",
 	"libflac",
-	"libsdl >=2.26.0",
 	"minimp3",
 	"ordered_map",
 	"stb")
@@ -244,10 +263,19 @@ if is_plat("linux") then
 	add_requires("libxext", "wayland")
 end
 
-if not is_plat("wasm") then
-	-- these libraries aren't supported yet on emscripten
+if not is_plat("android") then
+	-- Android has a handmade backend instead of libsdl (due to it being pretty intrusive in the package process)
+	add_requires("libsdl >=2.26.0")
+end
+
+if not is_plat("android", "wasm") then
+	-- these libraries aren't supported yet on android/emscripten
 	add_requires("efsw")
 	add_requires("newtondynamics3", { debug = is_plat("windows") and is_mode("debug") }) -- Newton doesn't like compiling in Debug on Linux
+end
+
+if not is_plat("wasm") then
+	-- these libraries have ports in emscripten
 	add_requires("openal-soft", { configs = { shared = true }})
 end
 
@@ -265,7 +293,7 @@ if has_config("tests") then
 	add_rules("download.assets.unittests")
 end
 
-set_allowedplats("windows", "mingw", "linux", "macosx", "wasm")
+set_allowedplats("windows", "mingw", "linux", "macosx", "wasm", "android")
 set_allowedmodes("debug", "releasedbg", "release", "asan", "tsan", "coverage")
 set_defaultmode("debug")
 
@@ -313,6 +341,10 @@ if is_plat("windows") then
 elseif is_plat("mingw") then
 	add_cxflags("-Og", "-Wa,-mbig-obj")
 	add_ldflags("-Wa,-mbig-obj")
+elseif is_plat("android") then
+	add_cxflags("-fPIC", { force = true }) -- { force = true } required because of a bug (see https://github.com/xmake-io/xmake/issues/3429)
+	add_mxflags("-fPIC")
+	add_asflags("-fPIC")
 elseif is_plat("wasm") then
 	add_cxflags("-sNO_DISABLE_EXCEPTION_CATCHING")
 	add_ldflags("-sNO_DISABLE_EXCEPTION_CATCHING", "-sALLOW_MEMORY_GROWTH", "-sWASM_BIGINT")
@@ -385,6 +417,11 @@ function ModuleTargetConfig(name, module)
 		remove_files("src/Nazara/" .. name .. "/Posix/**")
 	end
 
+	if not is_plat("android") then
+		remove_headerfiles("src/Nazara/" .. name .. "/Android/**")
+		remove_files("src/Nazara/" .. name .. "/Android/**")
+	end
+
 	if module.Custom then
 		module.Custom()
 	end
@@ -394,12 +431,12 @@ for name, module in pairs(modules) do
 	target("Nazara" .. name, function ()
 		set_group("Modules")
 
-		-- for now only shared compilation is supported (except on platforms like wasm)
-		if not is_plat("wasm") then
-			set_kind("shared")
-		else
+		-- for now only shared compilation is supported (except on platforms like android and wasm)
+		if is_plat("android", "wasm") then
 			set_kind("static")
 			add_defines("NAZARA_STATIC", { public = true })
+		else
+			set_kind("shared")
 		end
 
 		add_rpathdirs("$ORIGIN")

@@ -11,7 +11,7 @@ namespace Nz
 {
 	void HardwareInfoImpl::Cpuid(UInt32 functionId, UInt32 subFunctionId, UInt32 registers[4])
 	{
-	#if (defined(NAZARA_COMPILER_CLANG) || defined(NAZARA_COMPILER_GCC) || defined(NAZARA_COMPILER_INTEL)) && !defined(NAZARA_PLATFORM_WEB)
+	#if (defined(NAZARA_COMPILER_CLANG) || defined(NAZARA_COMPILER_GCC) || defined(NAZARA_COMPILER_INTEL)) && !defined(NAZARA_PLATFORM_WEB) && !defined(NAZARA_PLATFORM_ANDROID)
 		// https://en.wikipedia.org/wiki/CPUID
 		asm volatile(
 			#ifdef NAZARA_PLATFORM_x64
@@ -51,7 +51,7 @@ namespace Nz
 	{
 	#ifdef NAZARA_PLATFORM_x64
 		return true; // cpuid is always supported on x64 arch
-	#elif defined(NAZARA_PLATFORM_WEB)
+	#elif defined(NAZARA_PLATFORM_WEB) || defined(NAZARA_PLATFORM_IOS) || defined(NAZARA_PLATFORM_ANDROID)
 		return false;
 	#else
 		#if defined(NAZARA_COMPILER_CLANG) || defined(NAZARA_COMPILER_GCC) || defined(NAZARA_COMPILER_INTEL)

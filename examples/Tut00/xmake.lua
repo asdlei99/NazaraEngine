@@ -1,4 +1,4 @@
-if is_plat("wasm") then
+if is_plat("android", "wasm") then
 	return -- Physics3D is not yet supported on wasm because of Newton
 end
 

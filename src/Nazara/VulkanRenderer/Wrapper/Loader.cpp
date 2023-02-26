@@ -66,9 +66,9 @@ namespace Nz
 		{
 			#ifdef NAZARA_PLATFORM_WINDOWS
 			s_vulkanLib.Load("vulkan-1.dll");
-			#elif defined(NAZARA_PLATFORM_LINUX)
+			#elif defined(NAZARA_PLATFORM_LINUX) || defined(NAZARA_PLATFORM_ANDROID)
 			s_vulkanLib.Load("libvulkan.so");
-			#elif defined(NAZARA_PLATFORM_MACOS)
+			#elif defined(NAZARA_PLATFORM_MACOS) || defined(NAZARA_PLATFORM_IOS)
 			s_vulkanLib.Load("libMoltenVK.dylib");
 			#else
 			#error Unhandled platform
