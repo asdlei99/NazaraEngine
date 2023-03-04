@@ -328,11 +328,11 @@ if is_mode("debug") then
 	add_defines("NAZARA_DEBUG")
 end
 
-if is_plat("windows") then
-	if has_config("override_runtime") then
-		set_runtimes(is_mode("debug") and "MDd" or "MD")
-	end
+if is_host("windows") and has_config("override_runtime") then
+	set_runtimes(is_mode("debug") and "MDd" or "MD")
+end
 
+if is_plat("windows") then
 	add_defines("_CRT_SECURE_NO_WARNINGS")
 	add_cxxflags("/bigobj", "/permissive-", "/Zc:__cplusplus", "/Zc:externConstexpr", "/Zc:inline", "/Zc:lambda", "/Zc:preprocessor", "/Zc:referenceBinding", "/Zc:strictStrings", "/Zc:throwingNew")
 	add_cxflags("/w44062") -- Enable warning: switch case not handled
