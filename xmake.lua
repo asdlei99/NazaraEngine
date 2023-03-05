@@ -342,7 +342,7 @@ elseif is_plat("mingw") then
 	add_cxflags("-Og", "-Wa,-mbig-obj")
 	add_ldflags("-Wa,-mbig-obj")
 elseif is_plat("android") then
-	add_cxflags("-fPIC", { force = true }) -- { force = true } required because of a bug (see https://github.com/xmake-io/xmake/issues/3429)
+	add_cxflags("-fPIC")
 	add_mxflags("-fPIC")
 	add_asflags("-fPIC")
 elseif is_plat("wasm") then
